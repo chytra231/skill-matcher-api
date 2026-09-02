@@ -1,6 +1,9 @@
 (function () {
   "use strict";
 
+  var SUBMIT_URL =
+    "https://script.google.com/macros/s/AKfycbygmQWTN8LEG9z23HibkFirrYTpXQj5ThYxIPTFVMq-15rmrA6cehAwNSp-z-e2zWBo/exec";
+
   var STEPS = [
     {
       id: "fullName",
@@ -130,7 +133,7 @@
   var extraAnswers = {};
   var pendingChoice = {};
   var stepIndex = 0;
-  var phase = "questions"; // 'questions' | 'summary' | 'submitted'
+  var phase = "questions"; // 'questions' | 'summary' | 'submitting' | 'submitted'
 
   function el(tag, className, html) {
     var node = document.createElement(tag);
@@ -194,6 +197,50 @@
       text = step.prefix + val;
     }
     return text;
+  }
+
+  function maskIdNumber(value) {
+    var str = String(value || "");
+    var alnumIndices = [];
+    for (var i = 0; i < str.length; i++) {
+      if (/[a-zA-Z0-9]/.test(str[i])) alnumIndices.push(i);
+    }
+    var keepFromIndex = alnumIndices.length > 4 ? alnumIndices[alnumIndices.length - 4] : -1;
+    var result = "";
+    for (var j = 0; j < str.length; j++) {
+      var ch = str[j];
+      if (/[a-zA-Z0-9]/.test(ch)) {
+        result += j >= keepFromIndex ? ch : "X";
+      } else {
+        result += ch;
+      }
+    }
+    return result;
+  }
+
+  function buildSubmissionPayload() {
+    var stepById = {};
+    STEPS.forEach(function (step) {
+      stepById[step.id] = step;
+    });
+
+    return {
+      fullName: answers.fullName || "",
+      dob: answers.dob || "",
+      gender: answers.gender || "",
+      address: answers.address || "",
+      mobile: answers.mobile || "",
+      email: answers.email || "",
+      idType: answers.idType || "",
+      idNumberMasked: maskIdNumber(answers.idNumber),
+      planType: currentAnswerText(stepById.planType),
+      sumAssured: answers.sumAssured || "",
+      nomineeName: answers.nomineeName || "",
+      nomineeRelationship: currentAnswerText(stepById.nomineeRelationship),
+      preExisting: answers.preExisting || "",
+      conditionDetails: extraAnswers.preExisting || "",
+      smoker: answers.smoker || "",
+    };
   }
 
   function renderComposerForStep(step) {
@@ -399,6 +446,12 @@
       nextBtn.textContent = "Submit";
       nextBtn.disabled = false;
       composerForm.style.display = "";
+    } else if (phase === "submitting") {
+      composerField.innerHTML = "";
+      backBtn.disabled = true;
+      nextBtn.disabled = true;
+      nextBtn.textContent = "Submitting…";
+      composerForm.style.display = "";
     } else if (phase === "submitted") {
       composerForm.style.display = "none";
     }
@@ -443,7 +496,7 @@
       var badge = el(
         "div",
         "submitted-badge",
-        "✓ Submitted for review — no data has been saved or sent anywhere."
+        "✓ Your details have been submitted successfully."
       );
       html.appendChild(badge);
     }
@@ -495,13 +548,40 @@
         renderCurrentStep();
       }
     } else if (phase === "summary") {
-      phase = "submitted";
-      removeSummaryRow();
-      addBotBubble("Thank you. Here is your submitted KYC summary for this demo session.");
-      showSummaryBubble(true);
-      renderCurrentStep();
+      submitToServer();
     }
   });
+
+  function submitToServer() {
+    phase = "submitting";
+    renderCurrentStep();
+
+    var payload = buildSubmissionPayload();
+
+    fetch(SUBMIT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Request failed with status " + response.status);
+        }
+        phase = "submitted";
+        removeSummaryRow();
+        addBotBubble("Your details have been submitted successfully.");
+        showSummaryBubble(true);
+        renderCurrentStep();
+      })
+      .catch(function () {
+        phase = "summary";
+        addBotBubble(
+          "We couldn't submit your details. Please check your connection and try again."
+        );
+        renderCurrentStep();
+      });
+  }
 
   function removeSummaryRow() {
     var summaryBubble = chatWindow.querySelector(".bubble.summary");
