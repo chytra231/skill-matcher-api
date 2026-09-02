@@ -1,0 +1,171 @@
+:root {
+  --ink: #16202a;
+  --ink-soft: #2b3a49;
+  --paper: #f4efe6;
+  --paper-dim: #e8e1d3;
+  --copper: #c17a3f;
+  --slate: #4c6b8a;
+  --card-text: #f4efe6;
+  --card-text-dim: #c9d3dc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: var(--paper);
+  background-image: radial-gradient(circle at 20% 20%, var(--paper-dim) 0%, var(--paper) 55%);
+  font-family: "Work Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  padding: 2.5rem 2.25rem;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--card-text);
+  box-shadow: 0 24px 48px -20px rgba(22, 32, 42, 0.45);
+  border-top: 3px solid var(--copper);
+}
+
+.card__eyebrow {
+  margin: 0 0 1.25rem;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.card__name {
+  margin: 0 0 0.4rem;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  text-wrap: balance;
+  color: var(--card-text);
+}
+
+.card__subtitle {
+  margin: 0 0 1.75rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--card-text-dim);
+}
+
+.card__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.field input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--ink-soft);
+  border-radius: 3px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Work Sans", sans-serif;
+  font-size: 0.95rem;
+}
+
+.field input::placeholder {
+  color: #8a93a0;
+}
+
+.field input:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 1px;
+}
+
+.card__toggle {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--copper);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--copper);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.card__toggle:hover {
+  background: var(--copper);
+  color: var(--ink);
+}
+
+.card__toggle:focus-visible {
+  outline: 2px solid var(--slate);
+  outline-offset: 2px;
+}
+
+.card__details {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ink-soft);
+}
+
+.card__details dl {
+  margin: 0;
+}
+
+.card__detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.card__detail-row dt {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.card__detail-row dd {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--copper);
+}
+
+.card__details.card__details--error dd {
+  font-family: "Work Sans", sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #e2a76f;
+}
