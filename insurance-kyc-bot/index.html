@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Insurance KYC Bot</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark">&#9830;</span>
+        <span class="brand-name">KYC Intake Assistant</span>
+      </div>
+      <div class="demo-banner" role="alert">
+        Demo prototype &mdash; do not enter real personal or medical data.
+      </div>
+    </header>
+
+    <main class="chat-shell">
+      <div class="progress-track" id="progressTrack" aria-hidden="true"></div>
+
+      <div class="chat-window" id="chatWindow"></div>
+
+      <form class="composer" id="composerForm" autocomplete="off">
+        <div class="composer-field" id="composerField">
+          <!-- dynamic input injected here -->
+        </div>
+        <div class="composer-actions">
+          <button type="button" class="btn btn-ghost" id="backBtn">Back</button>
+          <button type="submit" class="btn btn-primary" id="nextBtn">Next</button>
+        </div>
+      </form>
+    </main>
+
+    <footer class="app-footer">
+      <p>All data shown is for demonstration purposes only and is not saved, stored, or transmitted anywhere.</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
