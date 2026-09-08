@@ -6,6 +6,20 @@
 
   var STEPS = [
     {
+      id: "agentName",
+      section: "Agent Details",
+      question: "What is your name (agent)?",
+      type: "text",
+      placeholder: "e.g. Priya Menon",
+    },
+    {
+      id: "agentEmail",
+      section: "Agent Details",
+      question: "What is your agent email address?",
+      type: "email",
+      placeholder: "agent@example.com",
+    },
+    {
       id: "fullName",
       section: "Personal Details",
       question: "What is your full name?",
@@ -225,6 +239,8 @@
     });
 
     return {
+      agentName: answers.agentName || "",
+      agentEmail: answers.agentEmail || "",
       fullName: answers.fullName || "",
       dob: answers.dob || "",
       gender: answers.gender || "",
