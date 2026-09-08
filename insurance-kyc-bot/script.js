@@ -143,6 +143,8 @@
   var nextBtn = document.getElementById("nextBtn");
   var progressTrack = document.getElementById("progressTrack");
 
+  composerForm.noValidate = true;
+
   var answers = {};
   var extraAnswers = {};
   var pendingChoice = {};
