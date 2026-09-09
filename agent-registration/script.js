@@ -1,6 +1,6 @@
 (function () {
   const APPS_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbygmQWTN8LEG9z23HibkFirrYTpXQj5ThYxIPTFVMq-15rmrA6cehAwNSp-z-e2zWBo/exec";
+    "https://script.google.com/macros/s/AKfycbwJJ7KBkraX6XLBCSmHJtNxUiScnldjyPo9zv2HR9dswhm8BkZhpEhM-bC8PqEMDIBUfw/exec";
   const PROPOSAL_FORM_BASE =
     "https://chytra231.github.io/skill-matcher-api/insurance-proposal-form/";
 
@@ -49,14 +49,41 @@
     };
 
     try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8",
-        },
-        body: JSON.stringify(payload),
-      });
+      let response;
+      try {
+        response = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+          body: JSON.stringify(payload),
+        });
+      } catch (networkErr) {
+        throw new Error(
+          "Unable to reach the registration service. Please check your connection and try again."
+        );
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          "Registration failed (server returned status " + response.status + "). Please try again."
+        );
+      }
+
+      let result = null;
+      try {
+        result = await response.json();
+      } catch (parseErr) {
+        // Response wasn't JSON; a 2xx status is enough to treat this as success.
+      }
+
+      if (result && typeof result === "object" && "status" in result) {
+        const resultStatus = String(result.status).toLowerCase();
+        if (resultStatus !== "success" && resultStatus !== "ok") {
+          throw new Error(result.message || "Registration failed. Please try again.");
+        }
+      }
 
       const agentId = generateAgentId(agentEmail);
       const agentLink = PROPOSAL_FORM_BASE + "?agent=" + agentId;
@@ -67,8 +94,7 @@
       formCard.style.display = "none";
       confirmCard.style.display = "block";
     } catch (err) {
-      formAlert.textContent =
-        "Something went wrong submitting your registration. Please check your connection and try again.";
+      formAlert.textContent = err.message || "Something went wrong submitting your registration. Please try again.";
       formAlert.style.display = "block";
       submitBtn.disabled = false;
       submitBtn.textContent = "Register";
