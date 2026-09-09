@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Registration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark">&#9830;</span>
+        <span class="brand-name">Agent Registration</span>
+      </div>
+      <div class="demo-banner" role="alert">
+        Register as an agent to receive your personal proposal-form link.
+      </div>
+    </header>
+
+    <main class="chat-shell simple-shell">
+      <div class="form-card" id="formCard">
+        <div class="form-alert" id="formAlert"></div>
+
+        <form id="registrationForm" novalidate>
+          <div class="field-group" id="field-agentName">
+            <label class="field-label" for="agentName">Agent Name</label>
+            <input class="field-input" type="text" id="agentName" name="agentName" autocomplete="name" required />
+            <div class="field-error">Please enter the agent's name.</div>
+          </div>
+
+          <div class="field-group" id="field-agentEmail">
+            <label class="field-label" for="agentEmail">Agent Email</label>
+            <input class="field-input" type="email" id="agentEmail" name="agentEmail" autocomplete="email" required />
+            <div class="field-error">Please enter a valid email address.</div>
+          </div>
+
+          <div class="field-group" id="field-agentCode">
+            <label class="field-label" for="agentCode">Agent Code No. <span class="field-optional">(optional)</span></label>
+            <input class="field-input" type="text" id="agentCode" name="agentCode" autocomplete="off" />
+          </div>
+
+          <div class="field-group" id="field-doName">
+            <label class="field-label" for="doName">Development Officer Name <span class="field-optional">(optional)</span></label>
+            <input class="field-input" type="text" id="doName" name="doName" autocomplete="off" />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Register</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="form-card confirm-card" id="confirmCard">
+        <div class="confirm-icon">&#10003;</div>
+        <h2>Registration Successful!</h2>
+        <p>Your agent ID has been generated. Share your personal link below to collect insurance proposals.</p>
+
+        <div class="agent-id-badge" id="agentIdBadge"></div>
+
+        <div class="link-box">
+          <input type="text" id="agentLink" readonly />
+          <button type="button" class="copy-btn" id="copyBtn">Copy Link</button>
+        </div>
+
+        <a class="new-reg-link" id="newRegLink">Register another agent</a>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <p>All data submitted is sent only to the configured registration service.</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
