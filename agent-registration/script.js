@@ -14,11 +14,6 @@
     document.getElementById("field-" + fieldId).classList.toggle("invalid", hasError);
   }
 
-  function generateAgentId(email) {
-    const cleaned = email.toLowerCase().replace(/[^a-z0-9]/g, "");
-    return cleaned.substring(0, 8) || "agent";
-  }
-
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
     formAlert.style.display = "none";
@@ -71,11 +66,13 @@
         );
       }
 
-      let result = null;
+      let result;
       try {
         result = await response.json();
       } catch (parseErr) {
-        // Response wasn't JSON; a 2xx status is enough to treat this as success.
+        throw new Error(
+          "Registration may have succeeded, but the server's response could not be read. Please contact support before sharing a link."
+        );
       }
 
       if (result && typeof result === "object" && "status" in result) {
@@ -85,8 +82,14 @@
         }
       }
 
-      const agentId = generateAgentId(agentEmail);
-      const agentLink = PROPOSAL_FORM_BASE + "?agent=" + agentId;
+      const agentId = result && result.agentId;
+      if (!agentId) {
+        throw new Error(
+          "Registration may have succeeded, but no agent ID was returned. Please contact support before sharing a link."
+        );
+      }
+
+      const agentLink = PROPOSAL_FORM_BASE + "?agent=" + encodeURIComponent(agentId);
 
       document.getElementById("agentIdBadge").textContent = "Agent ID: " + agentId;
       document.getElementById("agentLink").value = agentLink;
