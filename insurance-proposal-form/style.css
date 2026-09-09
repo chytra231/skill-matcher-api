@@ -83,6 +83,18 @@ body {
   line-height: 1.4;
 }
 
+.agent-missing-alert {
+  background: rgba(192, 57, 43, 0.08);
+  border: 1px solid rgba(192, 57, 43, 0.35);
+  color: var(--danger);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin: 16px 0 0;
+  text-align: center;
+}
+
 /* Chat shell */
 .chat-shell {
   background: var(--parchment);

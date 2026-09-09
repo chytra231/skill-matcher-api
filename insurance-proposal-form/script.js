@@ -2,7 +2,19 @@
   "use strict";
 
   var SUBMIT_URL =
-    "https://script.google.com/macros/s/AKfycbygmQWTN8LEG9z23HibkFirrYTpXQj5ThYxIPTFVMq-15rmrA6cehAwNSp-z-e2zWBo/exec";
+    "https://script.google.com/macros/s/AKfycbwJJ7KBkraX6XLBCSmHJtNxUiScnldjyPo9zv2HR9dswhm8BkZhpEhM-bC8PqEMDIBUfw/exec";
+
+  function getAgentIdFromUrl() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var value = params.get("agent");
+      return value ? value.trim() : "";
+    } catch (e) {
+      return "";
+    }
+  }
+
+  var agentId = getAgentIdFromUrl();
 
   function isMinorNominee(a) {
     var age = parseInt(a.nomineeAge, 10);
@@ -19,13 +31,6 @@
 
   var STEPS = [
     // Section 1: Agent / Development Officer Details
-    {
-      id: "agentName",
-      section: "Agent / Development Officer Details",
-      question: "What is the Agent's Name?",
-      type: "text",
-      placeholder: "e.g. Priya Menon",
-    },
     {
       id: "agentCode",
       section: "Agent / Development Officer Details",
@@ -779,7 +784,10 @@
   }
 
   function buildSubmissionPayload() {
-    var payload = {};
+    var payload = {
+      formType: "insuranceProposal",
+      agentId: agentId,
+    };
     STEPS.forEach(function (step) {
       var raw = answers[step.id] || "";
       payload[step.id] = step.mask ? maskIdNumber(raw) : raw;
@@ -1134,20 +1142,40 @@
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload),
     })
+      .catch(function () {
+        throw new Error(
+          "Unable to reach the submission service. Please check your connection and try again."
+        );
+      })
       .then(function (response) {
         if (!response.ok) {
-          throw new Error("Request failed with status " + response.status);
+          throw new Error(
+            "Submission failed (server returned status " + response.status + "). Please try again."
+          );
         }
+        return response.json().catch(function () {
+          return null;
+        });
+      })
+      .then(function (result) {
+        if (result && typeof result === "object" && "status" in result) {
+          var resultStatus = String(result.status).toLowerCase();
+          if (resultStatus !== "success" && resultStatus !== "ok") {
+            throw new Error(result.message || "Submission failed. Please try again.");
+          }
+        }
+
         phase = "submitted";
         removeSummaryRow();
         addBotBubble("Your details have been submitted successfully.");
         showSummaryBubble(true);
         renderCurrentStep();
       })
-      .catch(function () {
+      .catch(function (err) {
         phase = "summary";
         addBotBubble(
-          "We couldn't submit your details. Please check your connection and try again."
+          (err && err.message) ||
+            "We couldn't submit your details. Please check your connection and try again."
         );
         renderCurrentStep();
       });
@@ -1182,7 +1210,20 @@
     scrollToBottom();
   });
 
+  function showMissingAgentState() {
+    var alertEl = document.getElementById("agentMissingAlert");
+    if (alertEl) alertEl.style.display = "block";
+
+    var shellEl = document.querySelector(".chat-shell");
+    if (shellEl) shellEl.style.display = "none";
+  }
+
   function init() {
+    if (!agentId) {
+      showMissingAgentState();
+      return;
+    }
+
     addBotBubble(
       "Hello! I'll help you complete this insurance proposal form. Let's start with the agent and development officer details.",
       null
