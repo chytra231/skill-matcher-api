@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Task Checklist</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <h1>Task Checklist</h1>
+      <p class="today" id="today"></p>
+    </header>
+
+    <form class="add-form" id="add-form" autocomplete="off">
+      <label for="new-task" class="visually-hidden">New task</label>
+      <input
+        type="text"
+        id="new-task"
+        placeholder="What needs doing?"
+        maxlength="200"
+        required
+      >
+      <button type="submit">Add</button>
+    </form>
+
+    <ul class="task-list" id="task-list" aria-label="Tasks"></ul>
+
+    <p class="empty-state" id="empty-state">No tasks yet. Add one above.</p>
+
+    <footer class="app-footer" id="footer">
+      <div class="progress">
+        <p class="progress-text" id="progress-text" aria-live="polite"></p>
+        <div
+          class="progress-bar"
+          id="progress-bar"
+          role="progressbar"
+          aria-label="Tasks completed"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+      <button type="button" class="clear-btn" id="clear-completed">Clear completed</button>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
